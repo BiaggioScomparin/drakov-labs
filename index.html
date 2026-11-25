@@ -701,9 +701,6 @@
         <a href="#about">О лаборатории</a>
       </nav>
       <div class="header-actions">
-        <a href="/admin" class="btn btn-outline" title="Панель управления и добавление товаров">
-          ⚙️ Админ-панель
-        </a>
         <button class="btn btn-crimson" onclick="toggleCart(true)">
           🛒 Корзина <span class="cart-badge" id="cart-count">0</span>
         </button>
@@ -725,7 +722,6 @@
         </p>
         <div class="hero-cta">
           <a href="#catalog" class="btn btn-crimson">Открыть каталог продукции</a>
-          <a href="/admin" class="btn btn-outline">+ Добавить продукты (Админ)</a>
         </div>
         <div class="hero-metrics">
           <div>
@@ -769,7 +765,6 @@
           <h2 class="section-title">Каталог продукции</h2>
           <p class="section-sub">Актуальное наличие и спецификации препаратов лаборатории Drakov Lab</p>
         </div>
-        <a href="/admin" class="btn btn-outline">+ Управление каталогом</a>
       </div>
 
       <div class="catalog-controls">
@@ -824,7 +819,7 @@
         <strong style="color: var(--titanium);">DRAKOV LAB</strong> — Инновационный фармацевтический синтез. Все права защищены.
       </div>
       <div class="mono">
-        VERIFIED CLINICAL GRADE // <a href="/admin" style="color: var(--crimson-bright); text-decoration: none;">Панель администратора</a>
+        VERIFIED CLINICAL GRADE
       </div>
     </div>
   </footer>
@@ -923,10 +918,9 @@
             <h3>${allProducts.length === 0 ? 'Каталог пока пуст' : 'По вашему запросу ничего не найдено'}</h3>
             <p>
               ${allProducts.length === 0
-                ? 'Добавьте первые препараты через панель администратора — они сразу появятся на витрине.'
+                ? 'В каталоге пока нет товаров.'
                 : 'Попробуйте изменить поисковый запрос или выбрать другую категорию.'}
             </p>
-            <a href="/admin" class="btn btn-crimson">+ Добавить продукты в админ-панели</a>
           </div>
         `;
         return;
