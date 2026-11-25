@@ -936,16 +936,17 @@
         const st = STATUS_MAP_RU[p.status] || STATUS_MAP_RU.in_stock;
         const formLabel = p.category || FORM_LABELS_RU[p.form] || 'Препарат';
         const cur = p.currency || siteSettings.currency || '₽';
-        const priceStr = Number(p.price || 0) > 0
+        const hasPrice = Number(p.price || 0) > 0;
+        const priceStr = hasPrice
           ? `${Number(p.price).toLocaleString('ru-RU')} ${cur}`
-          : 'По запросу';
+          : 'Справочно';
 
         return `
           <article class="product-card">
             <div>
               <div class="card-top">
                 <span class="sku-tag">${p.code || 'DL-LAB'}</span>
-                <span class="stock-badge ${st.cls}">${st.label}</span>
+                <span class="stock-badge ${st.cls}">${hasPrice ? st.label : 'Информационно'}</span>
               </div>
               <h3 class="product-name">${p.name}</h3>
               <div class="product-specs">
@@ -957,12 +958,13 @@
             </div>
             <div class="card-footer">
               <div class="price-block">
-                <div class="price-val">${priceStr}</div>
+                <div class="price-val" style="${hasPrice ? '' : 'font-size: 14px; color: var(--silver);'}">${priceStr}</div>
                 <div class="price-sub">${p.purity || 'HPLC Verified'}</div>
               </div>
-              <button class="btn btn-crimson" onclick="addToCart('${p.id}')">
-                В корзину
-              </button>
+              ${hasPrice
+                ? `<button class="btn btn-crimson" onclick="addToCart('${p.id}')">В корзину</button>`
+                : `<span class="sku-tag" style="color: var(--crimson-bright); border-color: var(--border-crimson);">Только для информации</span>`
+              }
             </div>
           </article>
         `;
