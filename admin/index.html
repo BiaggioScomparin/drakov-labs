@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DRAKOV LAB — Painel de Cadastro de Produtos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070A11;
+      --panel: #0D131F;
+      --card: #121A2A;
+      --border: rgba(148, 163, 184, 0.16);
+      --crimson: #E11D48;
+      --crimson-bright: #FF3366;
+      --text: #F1F5F9;
+      --muted: #94A3B8;
+      --emerald: #10B981;
+      --amber: #F59E0B;
+      --danger: #EF4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Auth Overlay */
+    #auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 10, 17, 0.96);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px;
+      width: 100%;
+      max-width: 390px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+    }
+
+    .auth-box img {
+      height: 44px;
+      margin-bottom: 18px;
+    }
+
+    /* Topbar */
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .topbar {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .topbar-left img {
+      height: 40px;
+    }
+
+    .sync-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-crimson {
+      background: linear-gradient(135deg, var(--crimson-bright), var(--crimson));
+      color: #fff;
+    }
+
+    .btn-crimson:hover { opacity: 0.92; }
+
+    .btn-outline {
+      background: var(--card);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-outline:hover { border-color: var(--crimson); }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    /* Main */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--crimson);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Table */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 10px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--emerald);
+      color: #06281E;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 13px;
+      z-index: 300;
+      display: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .toast.show { display: block; }
+
+    @media (max-width: 980px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Auth Overlay -->
+  <div id="auth-overlay">
+    <div class="auth-box">
+      <img src="/assets/drakov-lab-horizontal-dark.svg" alt="DRAKOV LAB">
+      <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Painel Administrativo</h2>
+      <p style="font-size: 12px; color: var(--muted); margin-bottom: 20px;">Digite o PIN de acesso (padrão: <strong class="mono" style="color: #fff;">drakov2026</strong>)</p>
+      <input type="password" id="pin-input" class="form-input" placeholder="PIN de acesso" style="text-align: center; margin-bottom: 14px;" onkeydown="if(event.key==='Enter') login()">
+      <button class="btn btn-crimson" style="width: 100%; justify-content: center;" onclick="login()">Desbloquear Painel</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="topbar">
+      <div class="topbar-left">
+        <img src="/assets/drakov-lab-horizontal-dark.svg" alt="DRAKOV LAB">
+        <span class="sync-badge" id="sync-badge">🟡 Conectando...</span>
+      </div>
+      <div class="actions">
+        <a href="/" target="_blank" class="btn btn-outline">🌐 Abrir Site em Russo ↗</a>
+        <button class="btn btn-outline" onclick="openSettingsModal()">⚙️ Config. Loja</button>
+        <button class="btn btn-crimson" onclick="resetForm()">+ Novo Produto</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid-layout">
+      <!-- Left: Product Form -->
+      <section class="panel">
+        <div class="panel-title">
+          <span id="form-title">➕ Cadastrar Novo Produto</span>
+          <button class="btn btn-outline btn-sm" id="cancel-edit-btn" style="display:none;" onclick="resetForm()">Cancelar</button>
+        </div>
+
+        <form id="product-form" onsubmit="saveProduct(event)">
+          <input type="hidden" id="prod-id">
+
+          <div class="form-group">
+            <label class="form-label">Nome do Produto (ex: Тестостерон Энантат 350mg) *</label>
+            <input type="text" id="prod-name" class="form-input" required placeholder="Ex: Тестостерон Энантат">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Código / SKU</label>
+              <input type="text" id="prod-code" class="form-input mono" placeholder="Ex: TE350">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Dosagem / Concentração *</label>
+              <input type="text" id="prod-dosage" class="form-input" required placeholder="Ex: 350 mg/ml ou 15 mg">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Categoria / Forma</label>
+              <select id="prod-form" class="form-select">
+                <option value="injectable">Injetável (Инъекционные)</option>
+                <option value="oral">Comprimidos / Oral (Пероральные)</option>
+                <option value="peptide">Peptídeo (Пептиды)</option>
+                <option value="other">Outro (Другое)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Apresentação / Volume</label>
+              <input type="text" id="prod-volume" class="form-input" placeholder="Ex: 10 мл / 50 таб.">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Preço</label>
+              <input type="number" step="0.01" id="prod-price" class="form-input mono" placeholder="Ex: 4500">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Moeda</label>
+              <select id="prod-currency" class="form-select">
+                <option value="₽">RUB (₽)</option>
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="R$">BRL (R$)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Status de Estoque</label>
+              <select id="prod-status" class="form-select">
+                <option value="in_stock">Em Estoque (В наличии)</option>
+                <option value="pre_order">Sob Encomenda (Под заказ)</option>
+                <option value="out_of_stock">Esgotado (Нет в наличии)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pureza / Lote</label>
+              <input type="text" id="prod-purity" class="form-input mono" value="99.4% HPLC">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descrição (exibida no card do site em Russo)</label>
+            <textarea id="prod-desc" class="form-textarea" rows="3" placeholder="Ex: Инъекционный раствор высокой степени очистки..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-crimson" style="width: 100%; justify-content: center; padding: 12px;" id="save-btn">
+            💾 Salvar Produto no Banco
+          </button>
+        </form>
+      </section>
+
+      <!-- Right: Products List -->
+      <section class="panel">
+        <div class="panel-title">
+          <span>📦 Produtos Cadastrados (<span id="total-count">0</span>)</span>
+          <input type="text" id="admin-search" class="form-input" placeholder="Buscar produto..." style="max-width: 240px;" oninput="renderTable()">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>SKU / Nome</th>
+                <th>Dosagem / Forma</th>
+                <th>Preço</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Settings Panel -->
+    <section class="panel" id="settings-panel" style="margin-top: 24px; display: none;">
+      <div class="panel-title">
+        <span>⚙️ Configurações da Loja (Telegram / WhatsApp / Moeda)</span>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('settings-panel').style.display='none'">Fechar</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Usuário do Telegram (sem @)</label>
+          <input type="text" id="cfg-telegram" class="form-input" placeholder="drakovlab">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp (código país + DDD + número)</label>
+          <input type="text" id="cfg-whatsapp" class="form-input" placeholder="5511999999999">
+        </div>
+      </div>
+      <button class="btn btn-crimson" onclick="saveSettings()">Salvar Configurações</button>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Salvo com sucesso!</div>
+
+  <script>
+    const DEFAULT_PIN = 'drakov2026';
+    let products = [];
+    let settings = { telegram: 'drakovlab', whatsapp: '5511999999999' };
+
+    const CATEGORY_RU = {
+      injectable: 'Инъекционные',
+      oral: 'Пероральные',
+      peptide: 'Пептиды',
+      other: 'Другое'
+    };
+
+    function checkAuth() {
+      if (sessionStorage.getItem('drakov_auth') === 'true') {
+        document.getElementById('auth-overlay').style.display = 'none';
+        loadData();
+      }
+    }
+
+    function login() {
+      const val = document.getElementById('pin-input').value.trim();
+      if (val === DEFAULT_PIN) {
+        sessionStorage.setItem('drakov_auth', 'true');
+        document.getElementById('auth-overlay').style.display = 'none';
+        loadData();
+      } else {
+        alert('PIN incorreto! Padrão: ' + DEFAULT_PIN);
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    async function loadData() {
+      const badge = document.getElementById('sync-badge');
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        if (data && data.ok) {
+          products = data.products || [];
+          if (data.settings) settings = Object.assign(settings, data.settings);
+          localStorage.setItem('drakov_products', JSON.stringify(products));
+          badge.innerText = '🟢 PostgreSQL Conectado';
+          badge.style.background = 'rgba(16, 185, 129, 0.15)';
+          badge.style.color = '#34D399';
+        }
+      } catch (e) {
+        products = JSON.parse(localStorage.getItem('drakov_products') || '[]');
+        badge.innerText = '🟡 Modo Local';
+        badge.style.background = 'rgba(245, 158, 11, 0.15)';
+        badge.style.color = '#FBBF24';
+      }
+      document.getElementById('cfg-telegram').value = settings.telegram || '';
+      document.getElementById('cfg-whatsapp').value = settings.whatsapp || '';
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('products-tbody');
+      const q = (document.getElementById('admin-search').value || '').toLowerCase().trim();
+      document.getElementById('total-count').innerText = products.length;
+
+      const list = products.filter(p => {
+        if (!q) return true;
+        return [p.name, p.code, p.dosage, p.category].join(' ').toLowerCase().includes(q);
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--muted); padding: 36px;">Nenhum produto cadastrado ainda. Use o formulário ao lado para cadastrar!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const stColor = p.status === 'in_stock' ? '#10B981' : (p.status === 'pre_order' ? '#F59E0B' : '#EF4444');
+        const stLabel = p.status === 'in_stock' ? 'Em Estoque' : (p.status === 'pre_order' ? 'Sob Encomenda' : 'Esgotado');
+        return `
+          <tr>
+            <td>
+              <span class="mono" style="font-size: 11px; color: var(--crimson-bright);">${p.code || p.id}</span><br>
+              <strong>${p.name}</strong>
+            </td>
+            <td>
+              <span class="badge" style="background: rgba(225,29,72,0.15); color: #FDA4AF;">${p.dosage || '-'}</span>
+              <div style="font-size: 11px; color: var(--muted); margin-top: 3px;">${p.category || ''} ${p.volume ? '· ' + p.volume : ''}</div>
+            </td>
+            <td class="mono"><strong>${Number(p.price || 0).toLocaleString('pt-BR')} ${p.currency || '₽'}</strong></td>
+            <td><span class="badge" style="background: rgba(255,255,255,0.06); color: ${stColor};">${stLabel}</span></td>
+            <td>
+              <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">✏️ Editar</button>
+              <button class="btn btn-outline btn-sm" style="color: #F87171;" onclick="deleteProduct('${p.id}')">Excluir</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function saveProduct(e) {
+      e.preventDefault();
+      const existingId = document.getElementById('prod-id').value;
+      const formVal = document.getElementById('prod-form').value;
+      const prod = {
+        id: existingId || ('DL-' + Date.now()),
+        name: document.getElementById('prod-name').value.trim(),
+        code: document.getElementById('prod-code').value.trim().toUpperCase(),
+        dosage: document.getElementById('prod-dosage').value.trim(),
+        form: formVal,
+        category: CATEGORY_RU[formVal] || 'Другое',
+        volume: document.getElementById('prod-volume').value.trim(),
+        price: parseFloat(document.getElementById('prod-price').value) || 0,
+        currency: document.getElementById('prod-currency').value,
+        status: document.getElementById('prod-status').value,
+        purity: document.getElementById('prod-purity').value.trim() || '99.4% HPLC',
+        description: document.getElementById('prod-desc').value.trim()
+      };
+
+      const idx = products.findIndex(p => p.id === prod.id);
+      if (idx !== -1) products[idx] = prod;
+      else products.unshift(prod);
+
+      localStorage.setItem('drakov_products', JSON.stringify(products));
+      renderTable();
+      resetForm();
+
+      try {
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'save_product', payload: prod })
+        });
+        if (res.ok) showToast('Produto salvo no banco de dados!');
+        else showToast('Salvo localmente (erro API)');
+      } catch (err) {
+        showToast('Salvo localmente (offline)');
+      }
+    }
+
+    function editProduct(id) {
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('prod-id').value = p.id;
+      document.getElementById('prod-name').value = p.name;
+      document.getElementById('prod-code').value = p.code || '';
+      document.getElementById('prod-dosage').value = p.dosage || '';
+      document.getElementById('prod-form').value = p.form || 'injectable';
+      document.getElementById('prod-volume').value = p.volume || '';
+      document.getElementById('prod-price').value = p.price || '';
+      document.getElementById('prod-currency').value = p.currency || '₽';
+      document.getElementById('prod-status').value = p.status || 'in_stock';
+      document.getElementById('prod-purity').value = p.purity || '99.4% HPLC';
+      document.getElementById('prod-desc').value = p.description || '';
+
+      document.getElementById('form-title').innerText = '✏️ Editar Produto';
+      document.getElementById('save-btn').innerText = '💾 Salvar Alterações';
+      document.getElementById('cancel-edit-btn').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      document.getElementById('product-form').reset();
+      document.getElementById('prod-id').value = '';
+      document.getElementById('prod-purity').value = '99.4% HPLC';
+      document.getElementById('form-title').innerText = '➕ Cadastrar Novo Produto';
+      document.getElementById('save-btn').innerText = '💾 Salvar Produto no Banco';
+      document.getElementById('cancel-edit-btn').style.display = 'none';
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Deseja excluir este produto do catálogo?')) return;
+      products = products.filter(p => p.id !== id);
+      localStorage.setItem('drakov_products', JSON.stringify(products));
+      renderTable();
+
+      try {
+        await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete_product', payload: { id } })
+        });
+        showToast('Produto excluído!');
+      } catch (e) {}
+    }
+
+    function openSettingsModal() {
+      const p = document.getElementById('settings-panel');
+      p.style.display = p.style.display === 'none' ? 'block' : 'none';
+      if (p.style.display === 'block') p.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function saveSettings() {
+      const payload = {
+        telegram: document.getElementById('cfg-telegram').value.trim(),
+        whatsapp: document.getElementById('cfg-whatsapp').value.trim()
+      };
+      try {
+        await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'save_settings', payload })
+        });
+        showToast('Configurações salvas!');
+      } catch (e) {
+        showToast('Erro ao salvar configurações');
+      }
+    }
+
+    checkAuth();
+  </script>
+</body>
+</html>
